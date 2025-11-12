@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { getInjection } from '@/di/container';
 import { SESSION_COOKIE } from '@/config';
 
 export async function middleware(request: NextRequest) {
@@ -13,12 +12,8 @@ export async function middleware(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.redirect(new URL('/sign-in', request.url));
     }
-    try {
-      const authenticationService = getInjection('IAuthenticationService');
-      await authenticationService.validateSession(sessionId);
-    } catch (err) {
-      return NextResponse.redirect(new URL('/sign-in', request.url));
-    }
+    // TODO: Move session validation to server-side code to avoid Edge Runtime limitations
+    // For now, we'll just check if cookie exists
   }
 
   return NextResponse.next();
